@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Free PDF to JPG Converter Online</title>
+
+<meta name="description" content="Convert PDF pages to JPG images online for free. Download individual JPG images or all pages as a ZIP file. Fast, secure and browser based.">
+
+<meta name="robots" content="index, follow">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at top left,#183b68 0%,#0d2340 35%,#07172d 70%,#04111f 100%);
+    color:#172033;
+    padding:25px 15px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.tool-card{
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 20px 60px rgba(0,0,0,.28);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:32px;
+    line-height:1.25;
+    color:#172033;
+    margin-bottom:9px;
+}
+
+.header p{
+    color:#667085;
+    font-size:15px;
+    line-height:1.6;
+}
+
+.privacy{
+    background:#eff8ff;
+    border:1px solid #cfeaff;
+    color:#245b87;
+    padding:13px 15px;
+    border-radius:12px;
+    text-align:center;
+    font-size:14px;
+    margin-bottom:22px;
+}
+
+.upload-box{
+    border:2px dashed #6d8fb8;
+    border-radius:18px;
+    padding:42px 20px;
+    text-align:center;
+    background:linear-gradient(135deg,#f7fbff,#eef5fc);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.upload-box:hover,
+.upload-box.dragover{
+    background:#eaf4ff;
+    border-color:#315f96;
+}
+
+.upload-icon{
+    font-size:48px;
+    margin-bottom:10px;
+}
+
+.upload-box h3{
+    font-size:20px;
+    color:#172033;
+    margin-bottom:7px;
+}
+
+.upload-box p{
+    color:#667085;
+    font-size:14px;
+    margin-bottom:18px;
+}
+
+.file-btn{
+    display:inline-block;
+    background:linear-gradient(135deg,#174f88,#0d3159);
+    color:#fff;
+    padding:12px 24px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(13,49,89,.25);
+}
+
+#fileInput{
+    display:none;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:22px;
+}
+
+.option{
+    background:#f8fafc;
+    border:1px solid #e5e7eb;
+    padding:15px;
+    border-radius:14px;
+}
+
+.option label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    color:#344054;
+    margin-bottom:8px;
+}
+
+select{
+    width:100%;
+    padding:11px;
+    border:1px solid #d5d9e2;
+    border-radius:9px;
+    background:#fff;
+    color:#344054;
+    outline:none;
+    cursor:pointer;
+}
+
+.file-area{
+    margin-top:28px;
+}
+
+.file-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:13px;
+}
+
+.file-header h2{
+    font-size:20px;
+    color:#172033;
+}
+
+.clear-btn{
+    border:0;
+    background:#fff1f1;
+    color:#d92d20;
+    padding:8px 14px;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.empty{
+    text-align:center;
+    color:#98a2b3;
+    padding:30px;
+    border:1px dashed #d5d9e2;
+    border-radius:12px;
+    background:#fafbfc;
+}
+
+.pdf-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.pdf-item{
+    border:1px solid #e4e7ec;
+    border-radius:16px;
+    padding:15px;
+    background:#fff;
+    box-shadow:0 4px 15px rgba(0,0,0,.04);
+}
+
+.pdf-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+}
+
+.pdf-name{
+    font-size:14px;
+    font-weight:bold;
+    color:#172033;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:80%;
+}
+
+.pdf-size{
+    color:#667085;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.pdf-badge{
+    background:#fff0f0;
+    color:#d92d20;
+    font-size:11px;
+    font-weight:bold;
+    padding:5px 8px;
+    border-radius:7px;
+}
+
+.converted-pages{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.page-card{
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+    background:#f8fafc;
+}
+
+.page-preview{
+    width:100%;
+    height:150px;
+    object-fit:contain;
+    background:#eef1f5;
+    display:block;
+}
+
+.page-info{
+    padding:7px;
+    text-align:center;
+    font-size:11px;
+    color:#667085;
+}
+
+.download-page{
+    width:100%;
+    border:0;
+    background:#edf4ff;
+    color:#174f88;
+    padding:7px;
+    font-size:11px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.download-page:hover{
+    background:#dcecff;
+}
+
+.summary{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    margin-top:22px;
+    padding:15px;
+    background:#f7f9fc;
+    border:1px solid #edf0f4;
+    border-radius:12px;
+    font-size:14px;
+}
+
+.actions{
+    display:flex;
+    gap:12px;
+    margin-top:20px;
+}
+
+.download-all{
+    flex:1;
+    border:0;
+    background:linear-gradient(135deg,#174f88,#0d3159);
+    color:#fff;
+    padding:14px;
+    border-radius:11px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 7px 20px rgba(13,49,89,.25);
+}
+
+.download-all:disabled{
+    background:#aab7c7;
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
+.status{
+    text-align:center;
+    min-height:22px;
+    margin-top:15px;
+    font-size:14px;
+    color:#667085;
+}
+
+.footer{
+    text-align:center;
+    margin-top:20px;
+    color:#98a2b3;
+    font-size:12px;
+}
+
+@media(max-width:850px){
+
+    .options{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .pdf-list{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    body{
+        padding:10px;
+    }
+
+    .tool-card{
+        padding:17px;
+        border-radius:18px;
+    }
+
+    .header h1{
+        font-size:25px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+
+    .converted-pages{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .summary{
+        flex-direction:column;
+    }
+}
+
+@media(max-width:400px){
+
+    .converted-pages{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="tool-card">
+
+<div class="header">
+
+<h1>📄 PDF to JPG Converter</h1>
+
+<p>
+Convert PDF pages into high-quality JPG images online for free.
+</p>
+
+</div>
+
+<div class="privacy">
+
+🔒 Your PDF files are processed directly in your browser.
+Your files are not uploaded to our server.
+
+</div>
+
+<div class="upload-box" id="uploadBox">
+
+<div class="upload-icon">
+📄➡️🖼️
+</div>
+
+<h3>
+Drop your PDF files here
+</h3>
+
+<p>
+Upload one or multiple PDF files
+</p>
+
+<label class="file-btn" for="fileInput">
+Choose PDF Files
+</label>
+
+<input
+type="file"
+id="fileInput"
+accept="application/pdf"
+multiple>
+
+</div>
+
+<div class="options">
+
+<div class="option">
+
+<label>🖼️ JPG Quality</label>
+
+<select id="quality">
+
+<option value="0.70">
+Standard
+</option>
+
+<option value="0.82" selected>
+High
+</option>
+
+<option value="0.92">
+Very High
+</option>
+
+<option value="0.98">
+Maximum
+</option>
+
+</select>
+
+</div>
+
+<div class="option">
+
+<label>🔍 Image Resolution</label>
+
+<select id="scale">
+
+<option value="1">
+Standard
+</option>
+
+<option value="1.5" selected>
+High
+</option>
+
+<option value="2">
+Very High
+</option>
+
+<option value="2.5">
+Maximum
+</option>
+
+</select>
+
+</div>
+
+<div class="option">
+
+<label>👁️ Preview Pages</label>
+
+<select id="previewLimit">
+
+<option value="10">
+First 10 Pages
+</option>
+
+<option value="25" selected>
+First 25 Pages
+</option>
+
+<option value="50">
+First 50 Pages
+</option>
+
+<option value="9999">
+All Pages
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+<div class="file-area">
+
+<div class="file-header">
+
+<h2>
+Uploaded PDFs
+</h2>
+
+<button class="clear-btn" id="clearBtn">
+Clear All
+</button>
+
+</div>
+
+<div id="pdfList" class="pdf-list">
+
+<div class="empty">
+No PDF files selected yet.
+</div>
+
+</div>
+
+</div>
+
+<div class="summary">
+
+<div>
+📄 PDF Files:
+<strong id="pdfCount">0</strong>
+</div>
+
+<div>
+🖼️ JPG Pages:
+<strong id="pageCount">0</strong>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button
+class="download-all"
+id="downloadAll"
+disabled>
+
+📦 Convert & Download All JPGs as ZIP
+
+</button>
+
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="footer">
+
+Free Tools Zone • Fast • Secure • Browser Based
+
+</div>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+    GlobalWorkerOptions,
+    getDocument
+}
+from
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+
+
+GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+
+const fileInput =
+document.getElementById("fileInput");
+
+const uploadBox =
+document.getElementById("uploadBox");
+
+const pdfList =
+document.getElementById("pdfList");
+
+const clearBtn =
+document.getElementById("clearBtn");
+
+const downloadAll =
+document.getElementById("downloadAll");
+
+const pdfCount =
+document.getElementById("pdfCount");
+
+const pageCount =
+document.getElementById("pageCount");
+
+const status =
+document.getElementById("status");
+
+const qualitySelect =
+document.getElementById("quality");
+
+const scaleSelect =
+document.getElementById("scale");
+
+const previewLimitSelect =
+document.getElementById("previewLimit");
+
+
+let pdfFiles = [];
+
+let convertedPages = [];
+
+
+fileInput.addEventListener(
+"change",
+function(e){
+
+addPDFs(e.target.files);
+
+fileInput.value = "";
+
+});
+
+
+uploadBox.addEventListener(
+"dragover",
+function(e){
+
+e.preventDefault();
+
+uploadBox.classList.add("dragover");
+
+});
+
+
+uploadBox.addEventListener(
+"dragleave",
+function(){
+
+uploadBox.classList.remove("dragover");
+
+});
+
+
+uploadBox.addEventListener(
+"drop",
+function(e){
+
+e.preventDefault();
+
+uploadBox.classList.remove("dragover");
+
+addPDFs(e.dataTransfer.files);
+
+});
+
+
+function addPDFs(files){
+
+for(const file of files){
+
+if(file.type === "application/pdf"){
+
+pdfFiles.push(file);
+
+}
+
+}
+
+renderPDFList();
+
+}
+
+
+function renderPDFList(){
+
+pdfList.innerHTML = "";
+
+convertedPages = [];
+
+pageCount.textContent = "0";
+
+
+if(pdfFiles.length === 0){
+
+pdfList.innerHTML = `
+<div class="empty">
+No PDF files selected yet.
+</div>
+`;
+
+downloadAll.disabled = true;
+
+}else{
+
+pdfFiles.forEach(
+(file,index)=>{
+
+const div =
+document.createElement("div");
+
+div.className = "pdf-item";
+
+div.innerHTML = `
+
+<div class="pdf-top">
+
+<div style="min-width:0;">
+
+<div class="pdf-name">
+${escapeHTML(file.name)}
+</div>
+
+<div class="pdf-size">
+${formatBytes(file.size)}
+</div>
+
+</div>
+
+<div class="pdf-badge">
+PDF
+</div>
+
+</div>
+
+<div
+id="pages-${index}"
+class="converted-pages">
+
+<div
+class="empty"
+style="grid-column:1/-1;padding:20px;">
+
+Ready to convert
+
+</div>
+
+</div>
+
+`;
+
+pdfList.appendChild(div);
+
+});
+
+downloadAll.disabled = false;
+
+}
+
+pdfCount.textContent =
+pdfFiles.length;
+
+}
+
+
+clearBtn.addEventListener(
+"click",
+function(){
+
+pdfFiles = [];
+
+convertedPages = [];
+
+renderPDFList();
+
+status.textContent = "";
+
+});
+
+
+downloadAll.addEventListener(
+"click",
+async function(){
+
+if(pdfFiles.length === 0)
+return;
+
+
+downloadAll.disabled = true;
+
+convertedPages = [];
+
+
+try{
+
+const quality =
+Number(
+qualitySelect.value
+);
+
+const scale =
+Number(
+scaleSelect.value
+);
+
+const previewLimit =
+Number(
+previewLimitSelect.value
+);
+
+
+for(
+let fileIndex = 0;
+fileIndex < pdfFiles.length;
+fileIndex++
+){
+
+const file =
+pdfFiles[fileIndex];
+
+
+status.textContent =
+`Reading ${file.name}...`;
+
+
+const buffer =
+await file.arrayBuffer();
+
+
+const pdf =
+await getDocument({
+data:buffer
+}).promise;
+
+
+const pageContainer =
+document.getElementById(
+`pages-${fileIndex}`
+);
+
+
+pageContainer.innerHTML = "";
+
+
+const pagesToPreview =
+Math.min(
+pdf.numPages,
+previewLimit
+);
+
+
+for(
+let pageNumber = 1;
+pageNumber <= pdf.numPages;
+pageNumber++
+){
+
+status.textContent =
+`Converting page ${pageNumber} of ${pdf.numPages}...`;
+
+
+const page =
+await pdf.getPage(
+pageNumber
+);
+
+
+const viewport =
+page.getViewport({
+scale:scale
+});
+
+
+const canvas =
+document.createElement("canvas");
+
+
+canvas.width =
+Math.floor(viewport.width);
+
+canvas.height =
+Math.floor(viewport.height);
+
+
+const context =
+canvas.getContext(
+"2d",
+{
+alpha:false
+}
+);
+
+
+context.fillStyle =
+"#ffffff";
+
+
+context.fillRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+
+await page.render({
+
+canvasContext:context,
+
+viewport:viewport,
+
+background:"#ffffff"
+
+}).promise;
+
+
+const blob =
+await new Promise(
+resolve=>{
+
+canvas.toBlob(
+resolve,
+"image/jpeg",
+quality
+);
+
+});
+
+
+if(!blob)
+continue;
+
+
+const jpgName =
+createJPGName(
+file.name,
+pageNumber
+);
+
+
+convertedPages.push({
+
+blob:blob,
+
+name:jpgName,
+
+fileName:file.name,
+
+pageNumber:pageNumber
+
+});
+
+
+if(
+pageNumber <= pagesToPreview
+){
+
+const card =
+document.createElement("div");
+
+card.className =
+"page-card";
+
+
+const imageURL =
+URL.createObjectURL(blob);
+
+
+card.innerHTML = `
+
+<img
+class="page-preview"
+src="${imageURL}"
+alt="PDF page ${pageNumber}">
+
+<div class="page-info">
+Page ${pageNumber}
+</div>
+
+<button class="download-page">
+⬇ Download JPG
+</button>
+
+`;
+
+
+const button =
+card.querySelector(
+".download-page"
+);
+
+
+button.addEventListener(
+"click",
+function(){
+
+downloadBlob(
+blob,
+jpgName
+);
+
+});
+
+
+pageContainer.appendChild(card);
+
+}
+
+}
+
+
+pdf.destroy();
+
+}
+
+
+pageCount.textContent =
+convertedPages.length;
+
+
+status.textContent =
+`📦 Creating ZIP file...`;
+
+
+const zip =
+new JSZip();
+
+
+convertedPages.forEach(
+(page)=>{
+
+zip.file(
+page.name,
+page.blob
+);
+
+});
+
+
+const zipBlob =
+await zip.generateAsync({
+type:"blob"
+});
+
+
+downloadBlob(
+zipBlob,
+"free-tools-zone-pdf-to-jpg.zip"
+);
+
+
+status.textContent =
+`✅ ${convertedPages.length} JPG images converted and ZIP downloaded.`;
+
+
+}catch(error){
+
+console.error(error);
+
+status.textContent =
+"❌ Something went wrong. Please try another PDF.";
+
+}finally{
+
+downloadAll.disabled = false;
+
+}
+
+});
+
+
+function createJPGName(
+pdfName,
+pageNumber
+){
+
+const base =
+pdfName
+.replace(
+/\.pdf$/i,
+""
+)
+.replace(
+/[^a-z0-9_-]/gi,
+"_"
+);
+
+
+return `${base}_page_${pageNumber}.jpg`;
+
+}
+
+
+function downloadBlob(
+blob,
+filename
+){
+
+const url =
+URL.createObjectURL(blob);
+
+const link =
+document.createElement("a");
+
+link.href = url;
+
+link.download = filename;
+
+document.body.appendChild(link);
+
+link.click();
+
+link.remove();
+
+setTimeout(
+()=>{
+URL.revokeObjectURL(url);
+},
+1500
+);
+
+}
+
+
+function formatBytes(bytes){
+
+if(bytes === 0)
+return "0 Bytes";
+
+
+const units =
+[
+"Bytes",
+"KB",
+"MB",
+"GB"
+];
+
+
+const i =
+Math.floor(
+Math.log(bytes) /
+Math.log(1024)
+);
+
+
+return (
+parseFloat(
+(
+bytes /
+Math.pow(1024,i)
+).toFixed(2)
+)
++
+" "
++
+units[i]
+);
+
+}
+
+
+function escapeHTML(str){
+
+return str.replace(
+/[&<>"']/g,
+function(m){
+
+return {
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+
+}[m];
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
